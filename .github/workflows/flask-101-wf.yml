@@ -1,12 +1,27 @@
 name: first-workflow
 on: [push]
 jobs:
-  check-python-version:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-      - run: |
-          python --version
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pipenv
+        pipenv install --dev
+        pipenv install flask gunicorn
+        pipenv install flask-testing nose --dev
+    - name: run flask 
+      run: 
+        FLASK_ENV=development pipenv run flask run
+    - name: run flask gunicorn
+      run:  
+        pipenv run gunicorn wsgi:app --access-logfile=-
+    - name: Test with nose
+      run: |
+        pipenv run nosetests -s
