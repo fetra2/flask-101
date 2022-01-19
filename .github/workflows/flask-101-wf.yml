@@ -18,7 +18,7 @@ jobs:
         pipenv install flask-testing nose --dev
     - name: run flask 
       run: 
-        FLASK_ENV=development pipenv run flask run
+        FLASK_ENV=production pipenv run flask run
     - name: run flask gunicorn
       run:  
         pipenv run gunicorn wsgi:app --access-logfile=-
